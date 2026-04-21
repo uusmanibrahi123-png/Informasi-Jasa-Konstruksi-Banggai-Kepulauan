@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>SIJAKON Banggai</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    .card {
+      border-bottom: 1px solid #ccc;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+    }
+    img {
+      max-width: 100%;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Berita Konstruksi Banggai</h2>
+<div id="berita"></div>
+
+<script>
+const rssUrl = "https://api.rss2json.com/v1/api.json?rss_url=https://news.google.com/rss/search?q=jasa+konstruksi+indonesia_RSS";
+
+fetch(rssUrl)
+  .then(res => res.json())
+  .then(data => {
+    let html = "";
+
+    data.items.slice(0,5).forEach(item => {
+      html += `
+        <div class="card">
+          <h3>${item.title}</h3>
+          <img src="${item.thumbnail}" />
+          <p>${item.description.substring(0,120)}...</p>
+          <a href="${item.link}" target="_blank">Baca selengkapnya</a>
+        </div>
+      `;
+    });
+
+    document.getElementById("berita").innerHTML = html;
+  });
+</script>
+
+</body>
+</html>
