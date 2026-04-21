@@ -1,36 +1,35 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Berita Konstruksi</title>
-</head>
-<body>
-
-<h2>Berita Konstruksi</h2>
-<div id="berita">Loading...</div>
-
 <script>
-const rss = "https://api.rss2json.com/v1/api.json?rss_url=https://news.google.com/rss/search?q=konstruksi+indonesia";
+const rss = "https://api.allorigins.win/raw?url=https://news.google.com/rss/search?q=konstruksi+indonesia&hl=id&gl=ID&ceid=ID:id";
 
 fetch(rss)
-  .then(res => res.json())
+  .then(response => response.text())
+  .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
   .then(data => {
-    let isi = "";
+    const items = data.querySelectorAll("item");
+    let html = "";
 
-    data.items.slice(0,5).forEach(item => {
-      isi += `
-        <h3>${item.title}</h3>
-        <p>${item.description.substring(0,100)}...</p>
-        <a href="${item.link}" target="_blank">Baca selengkapnya</a>
-        <hr>
-      `;
+    if (items.length === 0) {
+      document.getElementById("berita").innerHTML = "Tidak ada berita ditemukan";
+      return;
+    }
+
+    items.forEach((el, i) => {
+      if (i < 5) {
+        html += `
+          <div style="margin-bottom:20px;">
+            <h3>${el.querySelector("title").textContent}</h3>
+            <p>${el.querySelector("description").textContent.substring(0,120)}...</p>
+            <a href="${el.querySelector("link").textContent}" target="_blank">
+              Baca selengkapnya
+            </a>
+          </div>
+        `;
+      }
     });
 
-    document.getElementById("berita").innerHTML = isi;
+    document.getElementById("berita").innerHTML = html;
   })
-  .catch(err => {
+  .catch(() => {
     document.getElementById("berita").innerHTML = "Gagal memuat berita";
   });
 </script>
-
-</body>
-</html>
